@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>地图显示</title>
+    <style>
+        html, body, #container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    <script type="text/javascript">
+        function initMap(key, center, locations, result) {
+            var map = new AMap.Map('container', {
+                zoom: 13,
+                center: center,
+                viewMode: '2D'
+            });
+
+            // 添加结果点标记
+            var resultMarker = new AMap.Marker({
+                position: result,
+                map: map,
+                icon: new AMap.Icon({
+                    size: new AMap.Size(25, 34),
+                    image: 'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png'
+                }),
+                title: '最优集合点',
+                offset: new AMap.Pixel(-12, -34)
+            });
+
+            // 添加所有地点标记（使用圆点样式）
+            locations.forEach(function(loc) {
+                new AMap.CircleMarker({
+                    center: loc.coordinates,
+                    map: map,
+                    radius: 4,  // 圆点半径
+                    fillColor: '#808080',  // 填充颜色
+                    fillOpacity: 0.6,  // 填充透明度
+                    strokeWeight: 1,  // 边框宽度
+                    strokeColor: '#404040',  // 边框颜色
+                    title: loc.address
+                });
+
+                // 绘制连线
+                new AMap.Polyline({
+                    path: [loc.coordinates, result],
+                    map: map,
+                    strokeColor: '#409EFF',  // 线条颜色
+                    strokeWeight: 2,  // 线条宽度
+                    strokeOpacity: 0.6,  // 线条透明度
+                    strokeStyle: 'dashed',  // 虚线样式
+                    strokeDasharray: [5, 5]  // 虚线间隔
+                });
+            });
+
+            // 自适应显示所有点
+            var points = locations.map(function(loc) { return loc.coordinates; });
+            points.push(result);
+            map.setFitView();
+        }
+    </script>
+</body>
+</html>
